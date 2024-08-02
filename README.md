@@ -3,18 +3,18 @@
 Documentação para manipulação no terminal Linux através de shell scripting
 
 ## Sumário
-* Tabela de Comandos 
-* Manipulação de arquivos e pastas
-* Editores de Texto
-* Processamento de Texto
-* Streams, pipes e redirecionamentos
-* Gerenciamento de processos
-* Compactação e Descompactação de arquivos
-* Gerenciamento de usuários
-* Shell Scripting
-* Miscelâneo
-* Configuração de Redes
-* SSH e HTTP
+* [Tabela de Comandos](#tabela-de-comandos) 
+* [Manipulação de arquivos e pastas](#manipulação-de-arquivos-e-pastas)
+* [Editores de Texto](#editores-de-texto)
+* [Processamento de Texto](#processamento-de-texto)
+* [Streams, pipes e redirecionamentos](#sterams-pipes-e-redirecionamentos)
+* [Gerenciamento de processos](#gerenciamento-de-processos)
+* [Compactação e Descompactação de arquivos](#compactação-e-descompactação-de-arquivos)
+* [Gerenciamento de usuários](#gerenciamento-de-usuários)
+* [Shell Scripting](#shell-scripting)
+* [Miscelâneo](#miscelâneo)
+* [Configuração de Redes](#configuração-de-redes)
+* [SSH e HTTP](#ssh-e-http)
 
 ## Tabela de comandos
 
@@ -215,7 +215,180 @@ Para saber todos os comandos referentes ao *ps*, basta olhar o manual:
 man ps
 ~~~
 ## Compactação e Descompactação de arquivos
+
+Para realizar as etapas de compactação e descompactação, vamos criar no diretório **compactacao** um arquivo *file.txt* com um conteúdo qualquer e copiá-lo em um arquivo *file2.txt*
+
+### Pacote BZIP
+Para compactar o arquivo *file.txt* utilizando *bzip2* basta seguir o comando abaixo que criará um arquivo na extensão *.bz2*:
+
+~~~
+bzip2 file.txt
+~~~
+
+Para compactar um arquivo e permanecer com o original no diretório, basta utilizar o comando:
+
+~~~
+bzip2 -k file.txt
+~~~
+
+Para descompactar, basta utilizar o comando:
+
+~~~
+bzip2 -d file.txt.bz2
+~~~
+
+Outra opção para descompactar um arquivo é o comando:
+
+~~~ 
+bunzip2 file.txt.bz2
+~~~
+
+Para ver o conteúdo de um arquivo compactado é possível utilizar o comando:
+
+~~~
+bzcat file.txt.bz2
+~~~
+
+### Pacote GZIP
+
+O GZIP é um algoritmo mais rápido para compactação, porém não é muito eficiente para grandes volumes de informação.
+
+Para compactar o arquivo basta seguir o comando abaixo que criará um arquivo na extensão *gz*:
+
+~~~
+gzip file2.txt
+~~~
+
+Para descompactar, basta utilizar um dos comandos:
+
+~~~
+gunzip file2.txt.gz
+gzip -d file2.txt.gz
+~~~
+
+### Método TAR
+Esse método coleta vários arquivos e realiza uma compactação ou descompactação. Para realizar a compactação dos arquivos *file.txt* e *file2.txt* basta utilizar o comando com a opção de compactar e de forçar o mesmo path, incluir o nome do arquivo compactado e quais arquivos serão alocados nele, como é possível ver no comando abaixo:
+
+~~~
+tar cf file.tar file.txt file2.txt
+~~~
+
+Poderiamos utilizar a opção *v* (verdose) para visualizar os constituíntes desse arquivo:
+
+~~~
+tar cv file.tar file.txt file2.txt
+~~~
+ 
+Para listar o conteúdo dentro do arquivo *.tar* podemos utilizar o comando:
+
+~~~
+tar tvf file.tar
+~~~ 
+
+Para descompactar do arquivo *.tar* para o diretório corrente, vamos utilizar a opção *x* (extrair):
+
+~~~
+tar xvf file.tar
+~~~ 
+
+### Combinação de compactadores
+
+É possível através do método *TAR* usar combinar mais métodos para a compactação. Para utilizar o método *GZIP* basta incluir a opção *z*, e para utilizar o método *BZIP2* basta incluir a opção *j*, como mostrado abaixo:
+
+~~~
+tar cvfz file.tar.gz file.txt file2.txt
+tar cvfj file.tar.bz2 file.txt file2.txt
+~~~
+
+Para visualizar o conteúdo basta utilizar o comando :
+
+~~~
+tar vft file.tar.gz 
+tar vft file.tar.bz2 
+~~~
+
+Para descompactar basta utilizar o comando:
+
+~~~
+tar xvfz file.tar.gz file.txt file2.txt
+tar xvfj file.tar.bz2 file.txt file2.txt
+~~~
+
+Para compactar um diretório inteiro, basta utilizar o comando:
+~~~
+tar cvfz diretorio.tar.gz diretorio/
+tar cvfj diretorio.tar.bz2 diretorio/
+~~~
+
+A descompactação vai ocorrer de forma analoga.
+
 ## Gerenciamento de usuários
+
+Todo controle de usuários é feito pelo super usuário, o **root**, que é diferente do usuário padrão do Linux. Para acessar e sair do usuário root é preciso utilizar os respectivos comandos:
+
+~~~ 
+sudo -i
+exit
+~~~
+
+Para criar um novo usuário é preciso estar no modo root e após incluir o comando abaixo seguir com as etapas de criação:
+
+~~~
+adduser nomeNovoUsuario
+~~~
+
+Para logar no novo usuário, não é preciso incluir o comando:
+
+~~~
+su nomeNovoUsuario
+~~~ 
+
+Para que ações possam ser realizadas, é preciso listar o usuário no grupo de sudoers, ou seja, grupo de usuários que tem permissão para certos processos no ambiente Linux. Para isso basta estar no modo root e incluir o comando 
+
+~~~
+adduser nomeNovoUsuario sudo
+~~~ 
+
+Cada usuário adicionado recebe um grupo atribuído a ele com o mesmo nome, e esses grupos podem ser visualizados no caminho */etc/group/*. Para criar novos grupos é possível utilizar o comando:
+
+~~~
+addgroup nomeNovoGrupo
+~~~
+
+Como usuário comum é possível trocar o dono de um grupo. Para isso basta utilizar o comando
+
+~~~
+sudo chow nomeNovoUsuário nomeArquivo
+~~~
+
+Também é possível trocar o grupo do qual um arquivo pertence pelo comando:
+
+~~~
+sudo chow :nomeNovoUsuário nomeArquivo
+~~~
+
+É possível analisar a permissão que cada tipo de usuário, grupo e outros possuem, como mostrado na imagem abaixo:
+
+<div align="center">
+    <img src="img/img4.png" width = 400>
+    <img src="img/img5.png" width = 400>
+</div>
+
+Portanto, vamos supor que o arquivo *arq1* tenha todas as permissões para o proprietário e para o grupo, porém para outros só há opção de leitura e queremos retirá-la, basta executar o comando:
+
+~~~
+sudo chmod 770 arq1
+~~~
+
+Para dar uma permissão específica para todos os níveis, é possível atribuir a letra junto ao comando, como mostrado abaixo com o arquivo *helloworld.py*:
+
+~~~
+chmod +x helloworld.py 
+#dá permissão para executar
+./helloworld.py
+~~~
+
+
 ## Shell Scripting
 ## Miscelâneo
 ## Configuração de Redes
