@@ -11,7 +11,6 @@ Documentação para manipulação no terminal Linux através de shell scripting
 * Gerenciamento de processos
 * Compactação e Descompactação de arquivos
 * Gerenciamento de usuários
-* Sistema de Arquivos
 * Shell Scripting
 * Miscelâneo
 * Configuração de Redes
@@ -48,7 +47,10 @@ Para análisar a hierarquia dos diretórios principais do Linux, vamos ao diret�
 cd /
 ls -l
  ~~~
-![print 1] (/img/print1.png)
+
+<div align="center">
+  <img src="img/print1.png" width = 400>
+</div>
 
 Desses diretórios encontramos:
 * **bin**: guarda todos os executáveis padrões e essenciais
@@ -116,12 +118,16 @@ No que se trata de editores de texto, o Linux possui dois principais: **NANO** e
 
 O editor de texto NANO é um editor de texto mais simples, com todas as opções básicas. Um exemplo do layout desse editor pode ser visto abaixo:
 
-![print 2] (/img/print2.png)
+<div align="center">
+  <img src="img/print2.png" width = 700>
+</div>
 
 Para acessar o editor basta inserir o comando
 ~~~
 nano nome_arquivo
 ~~~
+
+Para utilizar os comandos vistos na janela do editor, basta segurar a tecla *ctrl* + a tecla do comando desejado.
 
 ### VIM
 
@@ -173,3 +179,44 @@ Os símbolos "**>>**" e "**2>>**" são responsáveis por dar um **append** no ar
 **Pipes** são os redirecionamentos que acontecem entre os processos. Para isso é possível utilizar os redirecionadores ">", ">>" e "|".
 
 ## Gerenciamento de processos
+
+Processo é um programa em execução e podemos analisar isso do ponto de vista do sistema operacional. Para analisar todos os processos em execução é possível utilizar o comando.: 
+
+~~~
+ps -ef
+~~~
+
+Como resultado é possível ver:
+* **UID**: Quem é o resonsável pelo processo
+* **PID**: Identificação do processo (*process ID*)
+* **PPID**: Processo Pai (*Parent PID*)
+* **STIME**: Momento do processo
+* **CMD**: Comando utilizado para execução do processo
+
+<div align="center">
+    <img src="img/print3.png" width = 600>
+</div>
+
+Todos os processos em execução são mapeados para o diretório *proc*. Nele são exibidos os *PIDs* como diretórios, armazenando comandos, arquivos, como é estabelecida a comunicação, memória alocada, etc.
+
+### TOP
+Podemos utilizar o comando **top** para verificar todos os processos em execução além das estatísticas do sistema
+
+### PS
+
+**PS** verifica os processos que estão em execução, sendo uma ferramenta bem completa. Como comandos é possível utilizar:
+* ps -ef: Lista os processos
+* ps aux: Lista os processos com maiores informações
+* ps -eL: Lista todas as threads
+
+Para saber todos os comandos referentes ao *ps*, basta olhar o manual:
+
+~~~
+man ps
+~~~
+## Compactação e Descompactação de arquivos
+## Gerenciamento de usuários
+## Shell Scripting
+## Miscelâneo
+## Configuração de Redes
+## SSH e HTTP
