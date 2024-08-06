@@ -36,6 +36,7 @@ Documentação para manipulação no terminal Linux através de shell scripting
 | head | Exibe as primeiras linhas de um arquivo |
 | tail | Exibe as últimas linhas de um arquivo |
 | man | Exibe o manual de determinado comando |
+| clear | Limpa a tela |
  
 
 ## Manipulação de arquivos e pastas
@@ -528,9 +529,174 @@ Há comparadores específicos para verificar condições de arquivos. O script `
 | ```-r``` | Avalia se a leitura está habilitada |
 | ```-x``` | Avalia se a execução está habilitada |
 
-Para executar basta inserir o comando ```./comparadores_files.sh ../files/helloworld.py```
+Para executar basta inserir o comando ```./comparadores_files.sh ../files/helloworld.py```.
 
+Uma estrutura de comparação muito mais simples do que a apresentada até agora é com o comparador ```CASE```, como podemos ver no script ```comparadores3.sh```. Ele compara um parâmetro com uma condição, no caso será comparado se o valor é igual a 1, 2 ou 3. No fim de cada condição é preciso incluir ```;;```, e o *else* é identidicado por ```*```:
+
+~~~bash
+case $1 in
+  1)
+  echo "Parâmetro 1 igual a UM"
+  ;;
+  2)
+  echo "Parâmetro 1 igual a DOIS"
+  ;;
+  3)
+  echo "Parâmetro 1 igual a TRÊS"
+  ;;
+  *)
+  echo "Parâmetro diferente de 1, 2 ou 3"
+esac
+~~~
+
+No caso de *strings* existem algumas peculiaridades, como podemos ver no arquivo ```comparadors_strings.sh```. Podemos fazer uso dos seguintes comandos
+
+| Comando | Descrição |
+| ---- | ---- |
+| ```${#variavel}``` | Determina o tamanho da string |
+| ```-z``` | Avalia se a string é vazia |
+| ```==``` | Avalia se variável é igual a uma string |
+| ```!=``` | Avalia se variável é diferente de uma string |
+
+Para realizar múltiplas comparações, a sintaxe dos comparadores é um pouco diferentes das vistas até o momento, como por exemplo:
+
+~~~bash
+if [[ $variavel1 -ge $valor && $variavel2 -eq $valor]]; then
+
+fi
+
+if [[ $variavel1 -ge $valor || $variavel2 -eq $valor]]; then
+
+fi
+~~~
+
+### Operações aritméticas
+
+É possível realizar operações aritméticas no bash. Para isso é necessário que a expressão seja escrita entre ```(( ))```. Alguns exemplos são apresentados abaixo:
+
+~~~bash
+a=10
+
+# Incremento
+(( a++ )) # a =11
+echo "a++ = $a"
+
+# Atribuição de novo valor a variável
+a=$(( a+1 ))
+echo "a + 1 = $a"
+
+# Multiplicação
+b=$(( a * 2 ))
+echo "a *2 = $b"
+
+# Divisão
+c=$(( b / a))
+echo "$b / $a = $c"
+
+# Resto da divisão
+c=$(( 10 % 4))
+echo "Resto de 10 / 4 = $c"
+~~~
+
+### Loops
+Para executar comandos em repetição é possível utilizar a estrutura de laços. A estrutra desses laços é apresentada em alguns exemplos abaixo:
+
+~~~bash
+# Laço simples
+for i in {1..10}; do
+  echo "Número $i"
+done
+
+# Definindo máximo de iterações
+max=10
+for (( i=0; i < max; i++)); do
+    echo "Número $i"
+done
+
+# While
+j=1
+max_j=7
+while (( $j < $max_j)); do
+    echo "Número $j"
+    (( j++ ))
+done
+
+while [ $j -lt $max_j ]; do
+    echo "Número $j"
+    (( j++ ))
+done
+
+# Percorrendo arquivos
+arquivos=`ls`
+for i in $arquivos; do
+  if [ -f $i ]; then
+    echo "$i: Um arquivo";
+  fi
+  if [ -d $i ]; then 
+    echo "$i: Um diretório";
+  fi
+done
+~~~
+
+### Funções
+
+**Funções** são blocos de comando que executam uma ação e podem ser requisitadas em diferentes partes do código. No arquivo ```funcoes.sh``` é possível ver qual a sintaxe dessa estrutura, como mostrado abaixo:
+
+~~~bash
+# Função para imprimir arquivo
+imprime_arquivo() {
+    # verifica se é arquivo
+    if [ -f $1 ]; then
+        cat $1
+    else
+        echo "Arquivo não existe"
+    fi
+}
+
+# Usuário deve inserir o nome do arquivo
+read -p "Qual o nome do arquivo: " nome
+# Chamada da função
+imprime_arquivo $nome
+
+~~~
+
+Para utilizar um parâmetro, que é citado no momento da execução, para dentro da função, basta acrescentar o  valor ```$1``` ao lado da chamada da função no script.
+
+Podemos também utilizar as funções para executar algo e retornar algum tipo de processamento, através da função ```return```, como é possível ver no script ```funcoes2.sh```. Para obter o resultado de uma função, basta após sua chamada incluir o comando ```echo $?```.
+
+Um cuidado com a função ```return``` é que ela serve para *exit codes*, os quais tem um tamanho prefixado de 8 bites, ou seja, o maior valor possível é 255. 
+
+~~~bash
+# Função responsável por calcular um fatorial
+fatorial() {
+    v=$1
+    # verificar se o parâmetro foi passado
+    if [ $# -eq 1 ]; then
+        resultado=1
+        while (( v > 1 )); do
+            resultado=$(( resultado * v ))
+            v=$(( v-1 ))
+        done
+    else
+        resultado=1
+    fi
+    # return $resultado
+    echo "O fatorial de $1 é $resultado"
+}
+
+fatorial $1
+#echo $?
+~~~
 
 ## Miscelâneo
+
+Quando entramos em um terminal, alguns arquivos são executados, como:
+* *profile*
+* *.bashrc*
+
+O arquivo **profile** (*/etc/profile*) ele é executado no momento em que o *shell* é aberto, ele é um arquivo geral executado para todos os usuários do seu sistema. O arquivo **.bashrc** é individual para cada usuário e é um arquivo de inicialização do terminal e algo muito útil nele é a inicialização de *paths*.
+
+O arquivo **bash_history** é responsável por armazenar o histórico de comandos
+
 ## Configuração de Redes
 ## SSH e HTTP
