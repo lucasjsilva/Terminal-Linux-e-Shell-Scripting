@@ -35,6 +35,7 @@ Documentação para manipulação no terminal Linux através de shell scripting
 | cat | Lista o conteúdo de um arquivo |
 | head | Exibe as primeiras linhas de um arquivo |
 | tail | Exibe as últimas linhas de um arquivo |
+| man | Exibe o manual de determinado comando |
  
 
 ## Manipulação de arquivos e pastas
@@ -390,6 +391,146 @@ chmod +x helloworld.py
 
 
 ## Shell Scripting
+
+**Shell** é o padrão determinado para se trabalhar dentro do Linux, ele não é o único, porém é um dos mais útils. Todos os scripts em bash estão alocadas no diretório *srcipts*.
+
+O primeiro arquivo e mais básico é o **hello.sh**. Nele vemos que na primeira linha é preciso evidenciar qual é o interpretador a ser utilizado, dando referência à biblioteca utilizada, através das linhas:
+
+~~~bash
+#!/bin/bash
+~~~
+~~~python
+#!/bin/python3
+~~~
+
+Cada *script* deve retornar um código de erro, ou **exit codes**, eles servem para o interpretador identificar se a execução ocorreu sem problemas ou não. Para isso é possível utilizar o comando **exit** e na frente um *exit code* que geralmente é um número que varia de 0 a 255. Para analisar a saída do *exit code*, basta chamar a variável ambiente **?**:
+
+~~~bash
+echo $?
+~~~
+
+A lista dos *exit codes* mais comuns no Linux são:
+
+| *Exit Code* | Descrição |
+| --- | --- |
+| 0 | Sucesso |
+| 1 | Operação não permitida |
+| 2 | Arquivo ou diretório inexistente |
+| 3 | Processo não existente |
+| 4 | Chamada de sistema interrompida |
+| 5 | Erro de Input/Output |
+| 6 | Dispositivo ou endereço não existente |
+| 7 | Lista de argumento muito longa |
+
+### Parâmetros e variáveis
+
+Ao executar algum *script*, é possível receber algum parâmetro junto ao executável. Em bash, cada vez que um parâmetro é passado, é possível ler ele através da sua numeração, começando a partir do zero. Como apresentado no arquivo *parametro.sh*:
+* Para ler a variável *0* basta utilizar a sintaxe ```$0```
+* Para ler a quantidade de parâmetros basta utilizar a sintaxe ```$#```
+* Para ler todas as variáveis basta utilizar a sintaxe ```$*```
+
+~~~bash
+#!/bin/bash
+
+echo "Primeiro Parâmetro: $0"
+echo "Quantidade de parâmetros: $#"
+echo "Todas as variáveis: $*"
+~~~
+
+O parâmetro 0 é justamente a chamada de execução do arquivo (```./parametros.sh```), e ele não é contabilizado na quantidade de parâmetros nem na listagem de todas as variáveis. Os demais parâmetros são postos após a chamada do executável:
+
+~~~bash
+./parametros.sh param1 param2 param3
+~~~
+
+Também é possível trabalhar com variáveis, como no arquivo ```variaveis.sh```. Para realizar a declaração e o uso delas basta fazer a declaração e a chamada com o *$*:
+
+~~~bash
+variavel="teste"
+echo "Conteúdo da variável: $variavel"
+~~~
+
+Para armazenar comandos dentro de variáveis, basta utilizar  a sintaxe ``` `comando` ```, como por exemplo ``` var_ls = `ls` ```.
+
+É importante frizar que o uso de aspas duplas deve ocorrer principalmente para imprimir o conteúdo de uma variável que armazena uma *string*. Caso seja feito o uso de aspas simples, será impresso o nome da variável, e não seu conteúdo.
+
+Para fazer a leitura de comando, basta utilizar o comando ```read```, como é possível ver no arquivo ```read.sh```. 
+
+~~~bash
+read -p "Pergunta" resposta
+echo "$resposta"
+
+read -s -n1 -p "Você aceita continuar? (y/n) " continuar
+
+read -n1 -p "Digite qualquer tecla para sair " 
+
+
+exit 0
+~~~
+
+A opção ```-p``` permite imprimir a pergunta cuja resposta será lida. A variável logo após o comando armazenará o conteúdo lido no terminal, podendo ser utilizada novamente ao longo do script. É possível limitar a resposta do usuário com a opção ```-n``` e a quantidade de caracteres. A opção ```-s``` serve para suprimir a resposta do usuário.
+
+### Comparadores
+
+Podemos avaliar se uma variável corresṕonde a um valor a partir do comando ```if```, como é possível ver no arquivo ```comparadores.sh```. Ao utilizar o *if* podemos utilizar os seguintes comparadores:
+
+| Comparador | Correspondência |
+| ---- | ---- |
+| ```-gt``` | Maior que |
+| ```-lt``` | Menor que |
+| ```-eq``` | Igual a |
+| ```-ge``` | Maior ou igual a |
+| ```-le```  | Menor ou igual a |
+
+Além do mais, também é possível utilizar dos comparadores ```else``` e ```elif``` desde que estejam no mesmo bloco entre *if* e *fi*. A sintaxe para o uso de comparadores pode ser observada abaixo:
+
+~~~bash 
+a=10
+b=2
+c=3
+
+if [ $a -gt $b] 
+then
+  echo "$a > $b"
+fi
+
+if (( $a > $b ))  
+then
+  echo "$a Maior que $b"
+fi
+
+if [ $c -eq 10 ]; then
+  echo "$c igual a 10"
+elif [ $b -eq 8]; then
+  echo "$b igual a 8"
+else
+  "Não há igualdades"
+fi
+
+if [ $a -ge $b] 
+then
+  echo "$a >= $b"
+fi
+
+if [ ! $a -ge $b] 
+then
+  echo "$a >= $b"
+fi
+~~~
+
+Há comparadores específicos para verificar condições de arquivos. O script ```comparadores_files.sh``` receberá o script ```helloworld.py``` para avaliar algumas condições, como apresentado na tabela abaixo
+
+| Parâmetro | Descrição |
+| --- | --- |
+| ```-e``` | Arquivo ou diretório existe |
+| ```-f``` | Verifica se o parâmetro é um arquivo |
+| ```-d``` | Verifica se o parâmetro é um diretório |
+| ```-r``` | Avalia se a leitura está habilitada |
+| ```-x``` | Avalia se a execução está habilitada |
+
+Para executar basta inserir o comando ```./comparadores_files.sh ../files/helloworld.py```
+
+
 ## Miscelâneo
 ## Configuração de Redes
 ## SSH e HTTP
